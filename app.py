@@ -2,6 +2,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import pandas as pd
+import os
 
 # Cria a aplicação Flask
 app = Flask(__name__)
@@ -33,6 +34,30 @@ def addDespesa():
     item = request.json
     # Lê o arquivo Financas.csv e converte para um DataFrame
     financas = pd.read_csv('Financas.csv')
+
+    # Lê o arquivo Salarios.csv e converte para um DataFrame
+    try:
+        salarios = pd.read_csv('Salarios.csv')
+    except FileNotFoundError:
+        return jsonify({"error": "Salário não cadastrado"}), 404
+
+    # Verifica se há salários cadastrados
+    if salarios.empty:
+        return jsonify({"error": "Salário não cadastrado"}), 404
+
+    # Obtém o último salário cadastrado
+    ultimo_salario = salarios['SALARIO'].iloc[-1]
+
+    # Verifica se o salário é suficiente para a despesa
+    if ultimo_salario < item['valor']:
+        return jsonify({"error": "Salário insuficiente para cobrir a despesa"}), 400
+
+    # Subtrai o valor da despesa do salário
+    novo_salario = ultimo_salario - item['valor']
+
+    # Atualiza o último salário no arquivo Salarios.csv
+    salarios.loc[salarios.index[-1], 'SALARIO'] = novo_salario
+    salarios.to_csv('Salarios.csv', index=False)
 
     # Define o ID da nova despesa
     if financas.empty:
@@ -105,6 +130,92 @@ def updateDespesa(id):
 
     # Retorna as finanças atualizadas em formato JSON
     return jsonify(financas.to_dict('records'))
+
+# Rota para somar as despesas 
+@app.route("/sum", methods=["GET"])
+def sumDespesas():
+    # Lê o arquivo Financas.csv e converte para um DataFrame
+    financas = pd.read_csv('Financas.csv')
+
+    # Verifica se o arquivo está vazio
+    if financas.empty:
+        return jsonify({"error": "Nenhuma despesa cadastrada"}), 404
+
+    # Soma os valores das despesas
+    total = financas['VALOR'].sum()
+
+    # Retorna o total em formato JSON
+    return jsonify({"total": total})
+
+@app.route("/add_salary", methods=['POST'])
+def addSalary():
+    # Obtém os dados enviados pelo cliente
+    salario_data = request.json
+
+    # Lê o arquivo Salarios.csv e converte para um DataFrame
+    try:
+        salarios = pd.read_csv('Salarios.csv')
+    except FileNotFoundError:
+        # Se o arquivo não existir, cria um novo
+        with open("Salarios.csv", "w", encoding='utf-8') as arquivo:
+            arquivo.write("SALARIO\n")
+        salarios = pd.DataFrame(columns=['SALARIO'])
+
+    # Adiciona o novo salário ao arquivo Salarios.csv
+    with open("Salarios.csv", "a", encoding='utf-8') as arquivo:
+        arquivo.write(f"{salario_data['salario']}\n")
+
+    # Lê o arquivo Salarios.csv e converte para um dicionário
+    salarios = pd.read_csv('Salarios.csv')
+    salarios = salarios.to_dict('records')
+
+    # Retorna os salários em formato JSON
+    return jsonify(salarios)
+# Rota para listar os salários
+@app.route("/list_salary", methods=['GET'])
+def listSalaries():
+    # Lê o arquivo Salarios.csv e converte para um dicionário
+    salarios = pd.read_csv('Salarios.csv')
+    salarios = salarios.to_dict('records')
+
+    # Retorna os salários em formato JSON
+    return jsonify(salarios)
+
+#Rota para deletar um salário
+@app.route("/delete_salary", methods=['DELETE'])
+def deleteSalary():
+    # Lê o arquivo Salarios.csv e converte para um DataFrame
+    try:
+        salarios = pd.read_csv('Salarios.csv')
+    except FileNotFoundError:
+        return jsonify({"error": "Salário não encontrado"}), 404
+
+    # Remove o salário existente, se houver
+    if not salarios.empty:
+        os.remove('Salarios.csv')
+        return jsonify({"message": "Salário removido com sucesso"}), 200
+
+    return jsonify({"error": "Salário não encontrado"}), 404
+
+# Rota para atualizar o salário
+@app.route("/update_salary", methods=["PUT"])
+def updateSalary():
+    # Obtém os dados atualizados do corpo da requisição
+    novo_salario = request.json.get('salario')
+
+    # Lê o arquivo Salarios.csv e converte para um DataFrame
+    try:
+        salarios = pd.read_csv('Salarios.csv')
+    except FileNotFoundError:
+        return jsonify({"error": "Salário não encontrado"}), 404
+
+    # Atualiza o salário existente, se houver
+    if not salarios.empty:
+        salarios.loc[:, 'SALARIO'] = novo_salario
+        salarios.to_csv('Salarios.csv', index=False)
+        return jsonify({"message": "Salário atualizado com sucesso"}), 200
+
+    return jsonify({"error": "Salário não encontrado"}), 404
 
 
 # Inicia a aplicação Flask
