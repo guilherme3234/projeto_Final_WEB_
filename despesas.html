@@ -52,25 +52,35 @@
     <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-    
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Salário</h1>
-                    <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            
                 <div class="modal-body">
-                    <form>
-                        <div class="mb-3">
-                            <div class="content">
-                                <label for="recipient-name" class="col-form-label">Salário: R$ <label class="salario" for=""></label> </label>
-                                <span class="material-symbols-outlined icon">
-                                    edit
-                                </span>
-                            </div>
-                        </div>
-                    </form>
+                    <p>Seu salário atual é: R$ <span id="user-salary">0.00</span></p>
                 </div>
-
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEditSalary">Editar Salário</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalEditSalary" tabindex="-1" aria-labelledby="ModalLabelEdit" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Editar Salário</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="edit-salary-input" class="form-label">Novo Salário:</label>
+                    <input type="text" class="form-control" id="edit-salary-input">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="editarSalario()">Salvar</button>
+                </div>
             </div>
         </div>
     </div>
@@ -98,39 +108,40 @@
     </div>
 
     <!-- ADICIONAR -->
-    <div class="modal fade" id="Modal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-    
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">Adicionar os Gastos</h1>
-              <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- ADICIONAR -->
+<div class="modal fade" id="Modal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+  
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Adicionar os Gastos</h1>
+          <button type="button" class="btn-close" id="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+  
+        <div class="modal-body">
+          <form>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Despesas:</label>
+              <input type="text" class="form-control" id="recipient-name">
             </div>
-    
-            <div class="modal-body">
-              <form>
-
-                <div class="mb-3">
-                  <label for="recipient-name" class="col-form-label">Despesas:</label>
-                  <input type="text" class="form-control" id="recipient-name">
-                </div>
-    
-                <div class="mb-3">
-                  <label for="recipient-name" class="col-form-label">Gasto:</label>
-                  <input type="text" class="form-control" id="recipient-name">
-                </div>
-    
-              </form>
+  
+            <div class="mb-3">
+              <label for="recipient-valor" class="col-form-label">Gasto:</label>
+              <input type="text" class="form-control" id="recipient-valor">
             </div>
-    
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Descartar</button>
-              <button type="button" class="btn btn-primary">Adicionar</button>
-            </div>
-          </div>
+  
+          </form>
+        </div>
+  
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Descartar</button>
+          <button type="button" class="btn btn-primary" id="addDespesaBtn">Adicionar</button>
         </div>
       </div>
-
+    </div>
+  </div>
+  
+  
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
