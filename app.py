@@ -211,23 +211,7 @@ def listSalaries():
 
     # Retorna os salários em formato JSON
     return jsonify(salarios)
-
-#Rota para deletar um salário
-@app.route("/delete_salary", methods=['DELETE'])
-def deleteSalary():
-    # Lê o arquivo Salarios.csv e converte para um DataFrame
-    try:
-        salarios = pd.read_csv('Salarios.csv')
-    except FileNotFoundError:
-        return jsonify({"error": "Salário não encontrado"}), 404
-
-    # Remove o salário existente, se houver
-    if not salarios.empty:
-        os.remove('Salarios.csv')
-        return jsonify({"message": "Salário removido com sucesso"}), 200
-
-    return jsonify({"error": "Salário não encontrado"}), 404
-
+    
 # Rota para atualizar o salário
 @app.route("/update_salary", methods=["PUT"])
 def updateSalary():
