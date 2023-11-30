@@ -1,0 +1,89 @@
+html::before{
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(#13293d, #006494,#247ba0, #1b98e0);
+    z-index: -1;
+}
+
+.mf{
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+}
+
+.a{
+    text-decoration: none;
+    color: #fff;
+}
+
+.despesas{
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    border: 1px solid #2b7dc6;
+}
+
+#dp{
+    width: 1000px;
+    height: 100%;
+    background-image: linear-gradient(#13293d, #006494,#247ba0, #1b98e0);
+}
+
+#btn{
+    background-color: #000;
+    color: #fff;
+    border-radius: 5;
+    border: 1px solid #2b7dc6;
+}
+
+#btn:hover{
+    background-color: #335c81;
+    color: #fff;
+}
+
+#Modal{
+    background-image: linear-gradient(#13293d, #006494,#247ba0, #1b98e0);
+    color: #fff;
+}
+
+#Modal2{
+    background-image: linear-gradient(#13293d, #006494,#247ba0, #1b98e0);
+    color: #fff;
+}
+
+.modal-content{
+    background-image: linear-gradient(#13293d, #006494,#247ba0, #1b98e0);
+    border: #2b7dc6;
+}
+
+#btn-close{
+    background-color: #fff;
+}
+
+.icon{
+    color: #fff;
+    margin-left: 300px;
+}
+
+.content{
+    display: flex;
+    align-items: center;
+}
+
+.but{
+    display: flex;
+}
+
+.butt{
+    margin-left: 500px;
+}
+
+.fade{
+    color: #fff;
+}
+
+#btn-close{
+    background-color: #fff;
+}
