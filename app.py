@@ -121,6 +121,36 @@ def updateDespesa(id):
     if id not in financas['ID'].values:
         return jsonify({"error": "Despesa não encontrada"}), 404
 
+    # Obtém o registro da despesa com o ID fornecido
+    despesa = financas[financas['ID'] == id].iloc[0]
+
+    # Calcula a diferença entre o novo valor e o valor atual
+    diferenca_valor = novo_valor - despesa['VALOR']
+
+    # Lê o arquivo Salarios.csv e converte para um DataFrame
+    try:
+        salarios = pd.read_csv('Salarios.csv')
+    except FileNotFoundError:
+        return jsonify({"error": "Salário não cadastrado"}), 404
+
+    # Verifica se há salários cadastrados
+    if salarios.empty:
+        return jsonify({"error": "Salário não cadastrado"}), 404
+
+    # Obtém o último salário cadastrado
+    ultimo_salario = salarios['SALARIO'].iloc[-1]
+
+    # Verifica se o salário é suficiente para cobrir a diferença
+    if ultimo_salario < diferenca_valor:
+        return jsonify({"error": "Salário insuficiente para cobrir a diferença da despesa"}), 400
+
+    # Subtrai a diferença do salário
+    novo_salario = ultimo_salario - diferenca_valor
+
+    # Atualiza o último salário no arquivo Salarios.csv
+    salarios.loc[salarios.index[-1], 'SALARIO'] = novo_salario
+    salarios.to_csv('Salarios.csv', index=False)
+
     # Atualiza a despesa com o ID fornecido
     financas.loc[financas['ID'] == id, 'DESPESA'] = nova_despesa
     financas.loc[financas['ID'] == id, 'VALOR'] = novo_valor
@@ -130,6 +160,7 @@ def updateDespesa(id):
 
     # Retorna as finanças atualizadas em formato JSON
     return jsonify(financas.to_dict('records'))
+
 
 # Rota para somar as despesas 
 @app.route("/sum", methods=["GET"])
@@ -214,6 +245,7 @@ def updateSalary():
         salarios.loc[:, 'SALARIO'] = novo_salario
         salarios.to_csv('Salarios.csv', index=False)
         return jsonify({"message": "Salário atualizado com sucesso"}), 200
+    
 
     return jsonify({"error": "Salário não encontrado"}), 404
 
