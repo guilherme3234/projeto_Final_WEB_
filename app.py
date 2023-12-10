@@ -15,6 +15,19 @@ try:
         arquivo.write("ID,DESPESA,VALOR\n")
 except:
     pass
+try:
+    open('Salarios.csv', 'x')
+    with open("Salarios.csv", "a", encoding='utf-8') as arquivo:
+        arquivo.write("SALARIO\n")
+except:
+    pass
+
+# Lê o arquivo Salarios.csv e converte para um DataFrame
+try:
+    salarios = pd.read_csv('Salarios.csv')
+except FileNotFoundError:
+    # Se o arquivo não existir, inicializa o DataFrame vazio
+    salarios = pd.DataFrame(columns=['SALARIO'])
 
 
 # Define a rota para listar as finanças
@@ -93,6 +106,29 @@ def deleteDespesa():
     # Verifica se a despesa com o ID fornecido existe
     if id not in financas['ID'].values:
         return jsonify({"error": "Despesa não encontrada"}), 404
+
+    # Obtém o valor da despesa a ser excluída
+    valor_despesa = financas.loc[financas['ID'] == id, 'VALOR'].values[0]
+
+    # Lê o arquivo Salarios.csv e converte para um DataFrame
+    try:
+        salarios = pd.read_csv('Salarios.csv')
+    except FileNotFoundError:
+        return jsonify({"error": "Salário não cadastrado"}), 404
+
+    # Verifica se há salários cadastrados
+    if salarios.empty:
+        return jsonify({"error": "Salário não cadastrado"}), 404
+
+    # Obtém o último salário cadastrado
+    ultimo_salario = salarios['SALARIO'].iloc[-1]
+
+    # Adiciona o valor da despesa de volta ao salário
+    novo_salario = ultimo_salario + valor_despesa
+
+    # Atualiza o último salário no arquivo Salarios.csv
+    salarios.loc[salarios.index[-1], 'SALARIO'] = novo_salario
+    salarios.to_csv('Salarios.csv', index=False)
 
     # Remove a despesa com o ID fornecido
     financas = financas.drop(financas[financas['ID'] == id].index)
@@ -175,6 +211,9 @@ def sumDespesas():
     # Soma os valores das despesas
     total = financas['VALOR'].sum()
 
+    # Converte o valor para um tipo nativo do Python
+    total = float(total)
+
     # Retorna o total em formato JSON
     return jsonify({"total": total})
 
@@ -218,11 +257,12 @@ def updateSalary():
     # Obtém os dados atualizados do corpo da requisição
     novo_salario = request.json.get('salario')
 
+    # Verifica se o arquivo Salarios.csv existe
+    if not os.path.isfile('Salarios.csv'):
+        return jsonify({"error": "Arquivo Salarios.csv não encontrado"}), 404
+
     # Lê o arquivo Salarios.csv e converte para um DataFrame
-    try:
-        salarios = pd.read_csv('Salarios.csv')
-    except FileNotFoundError:
-        return jsonify({"error": "Salário não encontrado"}), 404
+    salarios = pd.read_csv('Salarios.csv')
 
     # Atualiza o salário existente, se houver
     if not salarios.empty:
@@ -230,6 +270,14 @@ def updateSalary():
         salarios.to_csv('Salarios.csv', index=False)
         return jsonify({"message": "Salário atualizado com sucesso"}), 200
     
+    # Se não houver salário cadastrado, adiciona um novo
+    with open("Salarios.csv", "w", encoding='utf-8') as arquivo:
+        arquivo.write("SALARIO\n")
+    salarios = pd.DataFrame(columns=['SALARIO'])
+    salarios.loc[0, 'SALARIO'] = novo_salario
+    salarios.to_csv('Salarios.csv', index=False)
+    return jsonify({"message": "Salário adicionado com sucesso"}), 200
+
 
     return jsonify({"error": "Salário não encontrado"}), 404
 

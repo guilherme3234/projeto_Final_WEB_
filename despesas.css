@@ -37,7 +37,12 @@ html::before{
     border-radius: 5;
     border: 1px solid #2b7dc6;
 }
-
+#btn-gastos-mensais{
+    background-color: #000;
+    color: #fff;
+    border-radius: 5;
+    border: 1px solid #2b7dc6;
+}
 #btn:hover{
     background-color: #335c81;
     color: #fff;

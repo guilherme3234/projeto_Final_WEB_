@@ -31,15 +31,31 @@ html::before{
 }
 
 #ff{
-    width: 600px;
-    background-color: #fff;
-    color: #000;
+    width: 1000px;
+    background-image: linear-gradient(#13293d, #006494,#247ba0, #1b98e0);
+    color: #fff;
 }
 
 .ff{
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    border: 1px solid #2b7dc6;
+}
+
+.cont{
     display: flex;
     align-items: center;
     justify-content: center;
     color: #fff;
     border: 1px solid #2b7dc6;
+}
+
+.img{
+    width: 400px;
+    height: 200px;
+}
+
+.text-img{
+    width: 400px;
 }
